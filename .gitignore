@@ -1,0 +1,9 @@
+# IntelliJ
+.idea/
+
+# ISO images
+*.iso
+
+# Vim
+*.swp
+
