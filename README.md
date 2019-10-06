@@ -122,72 +122,86 @@ Finally build the custom install image by launching the following command:
 # NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
-The NixOS image will be stored in `/nix/store`, in our case in `/nix/store/c6pg4y3v0rln1rcvf44bj3zxnmki50cg-nixos-19.09beta603.8e1ce32f491-x86_64-linux.iso/iso/nixos-19.09beta603.8e1ce32f491-x86_64-linux.iso`.
+The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso`.
 
 # Create USB flash drive
 
-Next we need to create a bootable USB flash drive. I assume, our USB disk is assigned to `/dev/disk3`. Please check your device file by executing:
+Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ diskutil list
+$ scp root@172.30.0.121:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso .
 ```
 
-In our case we get some partition details as feedback:
+Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
 
 ```
-/dev/disk3 (external, physical):
+# diskutil list
+```
+
+I assume, our USB drive is assigned to `/dev/disk2`:
+
+```
+/dev/disk2 (external, physical):
    #:                       TYPE NAME                    SIZE       IDENTIFIER
-   0:     FDisk_partition_scheme                        *128.8 GB   disk3
-   1:               Windows_NTFS                         128.8 GB   disk3s1
+   0:     FDisk_partition_scheme                        *15.5 GB    disk2
+   1:                       0xEF                         22.0 MB    disk2s2
 ```
 
-Create the USB stick by wiping all existing data:
+First of all we need to wipe all existing data on our flash drive:
 
 ```
-$ diskutil eraseDisk FAT32 NIXOS_ISO MBRFormat /dev/disk3
+$ diskutil eraseDisk FAT32 NIXOS_ISO MBRFormat /dev/disk2
 ```
 
 You should get a feedback message similar to:
 
 ```
-Started erase on disk3
+Started erase on disk2
 Unmounting disk
 Creating the partition map
 Waiting for partitions to activate
-Formatting disk3s1 as MS-DOS (FAT32) with name NIXOS_ISO
+Formatting disk2s1 as MS-DOS (FAT32) with name NIXOS_ISO
 512 bytes per physical sector
-/dev/rdisk3s1: 251596736 sectors in 3931199 FAT32 clusters (32768 bytes/cluster)
-bps=512 spc=64 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2 drv=0x80 bsec=251658238 bspf=30713 rdcl=2 infs=1 bkbs=6
+/dev/rdisk2s1: 30189312 sectors in 1886832 FAT32 clusters (8192 bytes/cluster)
+bps=512 spc=16 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2 drv=0x80 bsec=30218840 bspf=14741 rdcl=2 infs=1 bkbs=6
 Mounting disk
-Finished erase on disk3
+Finished erase on disk2
 ```
 
 Next unmount the USB stick:
 
 ```
-$ diskutil unmountDisk /dev/disk3
+$ diskutil unmountDisk /dev/disk2
 ```
 
 ... which should return:
 
 ```
-Unmount of all volumes on disk3 was successful
+Unmount of all volumes on disk2 was successful
 ```
 
-Next copy blockwise the ISO image to the USB stick:
+Next copy blockwise the custom minimal installation ISO image to our USB flash drive:
 
 ```
-$ sudo dd bs=4m if=nixos-19.09beta603.8e1ce32f491-x86_64-linux.iso of=/dev/rdisk3
+$ sudo dd bs=4m if=nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso of=/dev/rdisk2
 ```
 
 After the password has been entered, the file is copied:
 
 ```
-130+0 records in
-130+0 records out
-545259520 bytes transferred in 9.411540 secs (57935208 bytes/sec)
+135+0 records in
+135+0 records out
+566231040 bytes transferred in 100.537503 secs (5632038 bytes/sec)
 ```
 
-At this point we have created an USB thumb drive that is bootable by any computer. We will use this USB stick to bootstrap our NixOS machines.
+Finally we have created an USB flash drive that is bootable by any computer. We will use this USB drive to bootstrap our NixOS machines. In the end our USB drive should have a partition schema similar to:
 
-See the ISO image in the [release section](https://github.com/cpilka/nixos-minimal-installer-zfs-unstable/releases) of the Git repository. It contains the most recent and downloadable version of the NixOS 19.09 beta installer at time of writing this README (4th October 2019).
+```
+/dev/disk2 (external, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:     FDisk_partition_scheme                        *15.5 GB    disk2
+   1:                       0xEF                         22.0 MB    disk2s2
+```
+
+You find the ISO image in the [release section](https://github.com/cpilka/nixos-setup-minimal-installation-cd/releases) of the Git repository. It contains the most recent version of the NixOS 19.09 installer ISO image.
+
