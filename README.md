@@ -1,26 +1,54 @@
 # NixOS 19.09beta minimal custom installer
 
-This repository contains a build script that creates a custom NixOS installation ISO image. Here we already use NixOS 19.09 beta in production since (at the time of writing which is 4th October 2019) it is predictable that NixOS 19.09 will be released in the next 3-4 weeks. Compared to the original installation ISO image, our custom ISO image just contains `dialog` on top since it is required by our custom installer.
+This repository contains a build script to create a custom NixOS minimal installation ISO image. We already use NixOS 19.09 beta in production since at the time of writing (5th October 2019) we expect NixOS 19.09 to be released in few weeks. Compared to the original Nixos minimal installation ISO image, our custom ISO image contains following modifications:
 
-To create a custom NixOS install image we either need an existing NixOS 19.09 environment or at least VirtualBox on our machine.
+- initial copy of the NixOS channel is provided so that the user doesn't need to run "nix-channel --update" first
+- package `dialog` is installed since it is required by our custom installer
+- SSH daemon is running and accepting logins for `root`
+- password for root is set to `changeme`
+
+To create a custom NixOS installation image we either need an existing NixOS 19.09 environment or at least VirtualBox on our machine.
 
 ## Existing NixOS environment
 
-If you already run a NixOS instance, just launch the following command:
+If we already have access to a a NixOS 19.09 instance, we just need to clone the Git repository:
 
 ```
-NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./custom.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
+# cd ~
+# git clone https://github.com/cpilka/nixos-setup-minimal-installation-cd.git
+```
+
+... and build the ISO image by launching the following command:
+
+```
+NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
 ## VirtualBox
 
-If you don't have access to a NixOS 19.09 instance, the easiest way is to run the build in a virtual machine. To achieve this you need VirtualBox installed.
+In case we don't have access to a NixOS 19.09 instance, the easiest way is to run the build in a virtual machine. To achieve this we need VirtualBox installed.
 
-First of all download the appropriate VirtualBox appliance:
+First of all download the appropriate VirtualBox appliance. You find the latest build at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09):
 
 ```
-curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09beta596.77b5a1965fc/nixos-19.09beta596.77b5a1965fc-x86_64-linux.ova
+$ cd /tmp
+$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09beta606.3ba0d9f75cc/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
 ```
+
+Next check if the SHA256 checksum matches:
+
+```
+$ sha256sum nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
+```
+
+The calculated SHA256 hash should be:
+
+```
+6d777b59d3b10f8ba4c0da87176189c3b9d24a2c69304c135d71ef839780fc38  nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
+```
+
+... and should be same as listed at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09).
+
 
 Next start Virtualbox and import the OVA file for the downloaded VirtualBox appliance via `File` -> `Import Appliance`.
 
@@ -28,16 +56,16 @@ Next go into `Machine` -> `Settings`, then `System` and set `Base memory` to 409
 
 Next go into `Machine` -> `Settings`, then `Network` -> `Adapter 1`  and set `Attached to` to `Bridged adapter`. Next go to `Advanced` and set `Adapter type` to `Intel PRO/1000 MT Desktop (82540EM)`. Also ensure that `Cable Connected` is checked.
 
-Next start the machine, and wait for it to boot. It doesn't require to login, Plasma 5 is launched automatically as user `demo`. When the desktop appears, open a terminal and launch the following commands:
+Next start the virtual machine. It's not required to login, Plasma 5 is launched automatically as user `demo`. Whenever required (e.g. for a `sudo`), the default password for this user is also `demo`. When the desktop appears, open a terminal and launch the following commands:
  
 ```
-sudo su -
-nixos-generate-config --force
+$ sudo su -
+# nixos-generate-config --force
 ```
 
-The command above writes two configuration files `/etc/nixos/configuration.nix` and `/etc/nixos/hardware-configuration.nix`.
+The command above creates two configuration files `/etc/nixos/configuration.nix` and `/etc/nixos/hardware-configuration.nix`.
  
-We need to make two changes in the configuration file `/etc/nixos/configuration.nix`. First of all we need to define on which partition we want to install Grub. To achieve this uncomment the line 20:
+We need to make few changes in the configuration file `/etc/nixos/configuration.nix`. First of all we need to define on which partition we want to install GRUB. To achieve this uncomment the line 20:
 
 ```
 boot.loader.grub.device = "/dev/sda";
@@ -65,39 +93,40 @@ systemd.services.sshd.wantedBy = lib.mkOverride 40 [ "multi-user.target" ];
 Next change root password:
 
 ```
-passwd
+# passwd
 ```
 
 Finally we need to rebuild our NixOS instance and activate it:
 
 ```
-nixos-rebuild switch
+# nixos-rebuild switch
 ```
 
-After NixOS has been rebuilt, we need to install git manually:
+After NixOS has been rebuilt and restarted automatically, we need to login as root and install git manually:
 
 ```
-nix-env -iA nixos.gitMinimal
+# nix-env -iA nixos.gitMinimal
 ```
 
 Next clone the Git repository that contains the custom image builder:
 
 ```
-git clone https://github.com/cpilka/nixos-minimal-installer-zfs-unstable.git
+# cd ~
+# git clone https://github.com/cpilka/nixos-setup-minimal-installation-cd.git
 ```
 
 Finally build the custom install image by launching the following command:
 
 ```
-cd nixos-minimal-installer-zfs-unstable
-NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./custom.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
+# cd nixos-setup-minimal-installation-cd
+# NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
 The NixOS image will be stored in `/nix/store`, in our case in `/nix/store/c6pg4y3v0rln1rcvf44bj3zxnmki50cg-nixos-19.09beta603.8e1ce32f491-x86_64-linux.iso/iso/nixos-19.09beta603.8e1ce32f491-x86_64-linux.iso`.
 
-# Create USB stick
+# Create USB flash drive
 
-Next we need to create a bootable USB stick. I assume, our USB disk is assigned to `/dev/disk3`. Please check your device file by executing:
+Next we need to create a bootable USB flash drive. I assume, our USB disk is assigned to `/dev/disk3`. Please check your device file by executing:
 
 ```
 $ diskutil list
