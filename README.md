@@ -1,8 +1,8 @@
-# NixOS 19.09beta minimal custom installer
+# NixOS 19.09 minimal custom installer
 
-This repository contains a build script to create a custom NixOS minimal installation ISO image. We already use NixOS 19.09 beta in production since at the time of writing (5th October 2019) we expect NixOS 19.09 to be released in few weeks. Compared to the original Nixos minimal installation ISO image, our custom ISO image contains following modifications:
+This repository contains a build script to create a custom NixOS 19.09 minimal installation ISO image. Compared to the original NixOS minimal installation ISO image, our custom ISO image contains following modifications:
 
-- initial copy of the NixOS channel is provided so that the user doesn't need to run "nix-channel --update" first
+- initial copy of the NixOS 19.09 channel is provided so that the user doesn't need to run "nix-channel --update" first
 - package `dialog` is installed since it is required by our custom installer
 - SSH daemon is running and accepting logins for `root`
 - password for root is set to `changeme`
@@ -32,19 +32,19 @@ First of all download the appropriate VirtualBox appliance. You find the latest 
 
 ```
 $ cd /tmp
-$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09beta606.3ba0d9f75cc/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
+$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09.809.5000b1478a1/nixos-19.09.809.5000b1478a1-x86_64-linux.ova
 ```
 
 Next check if the SHA256 checksum matches:
 
 ```
-$ sha256sum nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
+$ sha256sum nixos-19.09.809.5000b1478a1-x86_64-linux.ova
 ```
 
 The calculated SHA256 hash should be:
 
 ```
-6d777b59d3b10f8ba4c0da87176189c3b9d24a2c69304c135d71ef839780fc38  nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.ova
+590bdb4ea54069e2e58d85f3eea90d15cc44767c6da3666f66e1497ab018dc53  nixos-19.09.809.5000b1478a1-x86_64-linux.ova
 ```
 
 ... and should be same as listed at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09).
@@ -112,7 +112,7 @@ Next clone the Git repository that contains the custom image builder:
 
 ```
 # cd ~
-# git clone https://github.com/cpilka/nixos-setup-minimal-installation-cd.git
+# git clone https://github.com/asconix/nixos-setup-minimal-installation-cd.git
 ```
 
 Finally build the custom install image by launching the following command:
