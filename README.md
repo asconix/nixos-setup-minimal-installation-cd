@@ -129,7 +129,7 @@ The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-s
 Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ scp root@172.30.0.121:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso .
+$ scp root@192.168.3.154:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.809.5000b1478a1-x86_64-linux.iso .
 ```
 
 Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
@@ -183,15 +183,15 @@ Unmount of all volumes on disk2 was successful
 Next copy blockwise the custom minimal installation ISO image to our USB flash drive:
 
 ```
-$ sudo dd bs=4m if=nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso of=/dev/rdisk2
+$ sudo dd bs=4m if=nixos-19.09.809.5000b1478a1-x86_64-linux.iso of=/dev/rdisk2
 ```
 
 After the password has been entered, the file is copied:
 
 ```
-135+0 records in
-135+0 records out
-566231040 bytes transferred in 100.537503 secs (5632038 bytes/sec)
+135+1 records in
+135+1 records out
+567279616 bytes transferred in 102.098161 secs (5556218 bytes/sec)
 ```
 
 Finally we have created an USB flash drive that is bootable by any computer. We will use this USB drive to bootstrap our NixOS machines. In the end our USB drive should have a partition schema similar to:
@@ -203,5 +203,4 @@ Finally we have created an USB flash drive that is bootable by any computer. We 
    1:                       0xEF                         22.0 MB    disk2s2
 ```
 
-You find the ISO image in the [release section](https://github.com/cpilka/nixos-setup-minimal-installation-cd/releases) of the Git repository. It contains the most recent version of the NixOS 19.09 installer ISO image.
-
+You find the ISO image in the [release section](https://github.com/asconix/nixos-setup-minimal-installation-cd/releases) of the Git repository.
