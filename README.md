@@ -32,23 +32,22 @@ First of all download the appropriate VirtualBox appliance. You find the latest 
 
 ```
 $ cd /tmp
-$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09.809.5000b1478a1/nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09.976.c75de8bc12c/nixos-19.09.976.c75de8bc12c-x86_64-linux.ova
 ```
 
 Next check if the SHA256 checksum matches:
 
 ```
-$ sha256sum nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+$ sha256sum nixos-19.09.976.c75de8bc12c-x86_64-linux.ova 
 ```
 
 The calculated SHA256 hash should be:
 
 ```
-590bdb4ea54069e2e58d85f3eea90d15cc44767c6da3666f66e1497ab018dc53  nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+fcbd6eff955d1f9da4595a82ddf6287fdaf7b8c7dbb58afb5ae42d2d83938693  nixos-19.09.976.c75de8bc12c-x86_64-linux.ova
 ```
 
 ... and should be same as listed at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09).
-
 
 Next start Virtualbox and import the OVA file for the downloaded VirtualBox appliance via `File` -> `Import Appliance`.
 
@@ -71,19 +70,19 @@ We need to make few changes in the configuration file `/etc/nixos/configuration.
 boot.loader.grub.device = "/dev/sda";
 ``` 
  
-To login later via SSH into our virtual machine we need to enable SSH daemon in `/etc/nixos/configuration.nix`. First of all add the `lib` namespace in line 5:
+To login later via SSH into our virtual machine we need to enable SSH daemon in `/etc/nixos/configuration.nix`. First of all add the `lib` namespace as attribute in line 5:
  
 ```
 { config, lib, pkgs, ...}:
 ```
  
-Next uncomment line 53:
+Next uncomment line 59:
 
 ```
 services.openssh.enable = true;
 ```
 
-... and add two new lines 54-55:
+... and add two new lines 60-61:
 
 ```
 services.openssh.permitRootLogin = "yes";
@@ -122,14 +121,14 @@ Finally build the custom install image by launching the following command:
 # NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
-The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso`.
+The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso`.
 
 # Create USB flash drive
 
 Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ scp root@192.168.3.154:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.809.5000b1478a1-x86_64-linux.iso .
+$ scp root@192.168.3.154:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso .
 ```
 
 Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
@@ -183,7 +182,7 @@ Unmount of all volumes on disk2 was successful
 Next copy blockwise the custom minimal installation ISO image to our USB flash drive:
 
 ```
-$ sudo dd bs=4m if=nixos-19.09.809.5000b1478a1-x86_64-linux.iso of=/dev/rdisk2
+$ sudo dd bs=4m if=nixos-19.09.976.c75de8bc12c-x86_64-linux.iso of=/dev/rdisk2
 ```
 
 After the password has been entered, the file is copied:
