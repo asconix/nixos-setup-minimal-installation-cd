@@ -121,14 +121,14 @@ Finally build the custom install image by launching the following command:
 # NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
-The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso`.
+The NixOS ISO image is stored in `/nix/store/` and symlinked to `result/iso`, in our case we find the ISO image in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso`.
 
 # Create USB flash drive
 
 Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ scp root@192.168.3.154:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso .
+$ scp root@IP_OF_OUR_VM:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso .
 ```
 
 Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
@@ -203,3 +203,4 @@ Finally we have created an USB flash drive that is bootable by any computer. We 
 ```
 
 You find the ISO image in the [release section](https://github.com/asconix/nixos-setup-minimal-installation-cd/releases) of the Git repository.
+
