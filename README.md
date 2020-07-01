@@ -1,17 +1,17 @@
-# NixOS 19.09 minimal custom installer
+# NixOS 20.03 minimal custom installer
 
-This repository contains a build script to create a custom NixOS 19.09 minimal installation ISO image. Compared to the original NixOS minimal installation ISO image, our custom ISO image contains following modifications:
+This repository contains a build script to create a custom NixOS 20.03 minimal installation ISO image. Compared to the original NixOS minimal installation ISO image, our custom ISO image contains following modifications:
 
-- initial copy of the NixOS 19.09 channel is provided so that the user doesn't need to run "nix-channel --update" first
+- initial copy of the NixOS 20.03 channel is provided so that the user doesn't need to run "nix-channel --update" first
 - package `dialog` is installed since it is required by our custom installer
 - SSH daemon is running and accepting logins for `root`
 - password for root is set to `changeme`
 
-To create a custom NixOS installation image we either need an existing NixOS 19.09 environment or at least VirtualBox on our machine.
+To create a custom NixOS installation image we either need an existing NixOS 20.03 environment or at least VirtualBox on our machine.
 
 ## Existing NixOS environment
 
-If we already have access to a a NixOS 19.09 instance, we just need to clone the Git repository:
+If we already have access to a a NixOS 20.03 instance, we just need to clone the Git repository:
 
 ```
 # cd ~
@@ -21,33 +21,33 @@ If we already have access to a a NixOS 19.09 instance, we just need to clone the
 ... and build the ISO image by launching the following command:
 
 ```
-NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
+NIX_PATH=nixpkgs=channel:nixos-20.03:nixos-config=./iso.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
 ## VirtualBox
 
-In case we don't have access to a NixOS 19.09 instance, the easiest way is to run the build in a virtual machine. To achieve this we need VirtualBox installed.
+In case we don't have access to a NixOS 20.03 instance, the easiest way is to run the build in a virtual machine. To achieve this we need VirtualBox installed.
 
-First of all download the appropriate VirtualBox appliance. You find the latest build at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09):
+First of all download the appropriate VirtualBox appliance. You find the latest build at [https://nixos.org/channels/nixos-20.03](https://nixos.org/channels/nixos-20.03):
 
 ```
-$ cd /tmp
-$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09.976.c75de8bc12c/nixos-19.09.976.c75de8bc12c-x86_64-linux.ova
+$ cd ~/Downloads
+$ curl -O https://releases.nixos.org/nixos/20.03/nixos-20.03.2351.f8248ab6d9e/nixos-20.03.2351.f8248ab6d9e-x86_64-linux.ova
 ```
 
 Next check if the SHA256 checksum matches:
 
 ```
-$ sha256sum nixos-19.09.976.c75de8bc12c-x86_64-linux.ova 
+$ sha256sum nixos-20.03.2351.f8248ab6d9e-x86_64-linux.ova 
 ```
 
 The calculated SHA256 hash should be:
 
 ```
-fcbd6eff955d1f9da4595a82ddf6287fdaf7b8c7dbb58afb5ae42d2d83938693  nixos-19.09.976.c75de8bc12c-x86_64-linux.ova
+67581016b7715cb5d865a4d84a992142d92e8ecfdf295b7ef13ec1401f31d173  nixos-20.03.2351.f8248ab6d9e-x86_64-linux.ova
 ```
 
-... and should be same as listed at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09).
+... and should be same as listed at [https://nixos.org/channels/nixos-20.03](https://nixos.org/channels/nixos-20.03).
 
 Next start Virtualbox and import the OVA file for the downloaded VirtualBox appliance via `File` -> `Import Appliance`.
 
@@ -76,20 +76,20 @@ To login later via SSH into our virtual machine we need to enable SSH daemon in 
 { config, lib, pkgs, ...}:
 ```
  
-Next uncomment line 59:
+Next uncomment line 63:
 
 ```
 services.openssh.enable = true;
 ```
 
-... and add two new lines 60-61:
+... and add two new lines 64-65:
 
 ```
 services.openssh.permitRootLogin = "yes";
 systemd.services.sshd.wantedBy = lib.mkOverride 40 [ "multi-user.target" ];
 ```
 
-Next change root password:
+Next change root password to `changeme`:
 
 ```
 # passwd
