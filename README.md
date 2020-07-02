@@ -118,17 +118,17 @@ Finally build the custom install image by launching the following command:
 
 ```
 # cd nixos-setup-minimal-installation-cd
-# NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
+# NIX_PATH=nixpkgs=channel:nixos-20.03:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
-The NixOS ISO image is stored in `/nix/store/` and symlinked to `result/iso`, in our case we find the ISO image in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso`.
+The NixOS ISO image is stored in `/nix/store/` and symlinked to `result/iso`, in our case we find the ISO image in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso`.
 
 # Create USB flash drive
 
 Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ scp root@IP_OF_OUR_VM:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09.976.c75de8bc12c-x86_64-linux.iso .
+$ scp root@IP_OF_OUR_VM:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso .
 ```
 
 Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
@@ -161,8 +161,8 @@ Creating the partition map
 Waiting for partitions to activate
 Formatting disk2s1 as MS-DOS (FAT32) with name NIXOS_ISO
 512 bytes per physical sector
-/dev/rdisk2s1: 30189312 sectors in 1886832 FAT32 clusters (8192 bytes/cluster)
-bps=512 spc=16 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2 drv=0x80 bsec=30218840 bspf=14741 rdcl=2 infs=1 bkbs=6
+/dev/rdisk2s1: 30186672 sectors in 1886667 FAT32 clusters (8192 bytes/cluster)
+bps=512 spc=16 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2048 drv=0x80 bsec=30216192 bspf=14740 rdcl=2 infs=1 bkbs=6
 Mounting disk
 Finished erase on disk2
 ```
@@ -182,15 +182,15 @@ Unmount of all volumes on disk2 was successful
 Next copy blockwise the custom minimal installation ISO image to our USB flash drive:
 
 ```
-$ sudo dd bs=4m if=nixos-19.09.976.c75de8bc12c-x86_64-linux.iso of=/dev/rdisk2
+$ sudo dd bs=4m if=nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso of=/dev/rdisk2
 ```
 
 After the password has been entered, the file is copied:
 
 ```
-135+1 records in
-135+1 records out
-567279616 bytes transferred in 102.098161 secs (5556218 bytes/sec)
+138+1 records in
+138+1 records out
+579862528 bytes transferred in 103.871480 secs (5582500 bytes/sec)
 ```
 
 Finally we have created an USB flash drive that is bootable by any computer. We will use this USB drive to bootstrap our NixOS machines. In the end our USB drive should have a partition schema similar to:
