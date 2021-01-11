@@ -44,11 +44,10 @@ $ sha256sum nixos-20.09.2538.0cfd08f4881-x86_64-linux.ova
 The calculated SHA256 hash should be:
 
 ```
-590bdb4ea54069e2e58d85f3eea90d15cc44767c6da3666f66e1497ab018dc53  nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+67581016b7715cb5d865a4d84a992142d92e8ecfdf295b7ef13ec1401f31d173  nixos-20.03.2351.f8248ab6d9e-x86_64-linux.ova
 ```
 
-... and should be same as listed at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09).
-
+... and should be same as listed at [https://nixos.org/channels/nixos-20.03](https://nixos.org/channels/nixos-20.03).
 
 Next start Virtualbox and import the OVA file for the downloaded VirtualBox appliance via `File` -> `Import Appliance`.
 
@@ -71,26 +70,26 @@ We need to make few changes in the configuration file `/etc/nixos/configuration.
 boot.loader.grub.device = "/dev/sda";
 ``` 
  
-To login later via SSH into our virtual machine we need to enable SSH daemon in `/etc/nixos/configuration.nix`. First of all add the `lib` namespace in line 5:
+To login later via SSH into our virtual machine we need to enable SSH daemon in `/etc/nixos/configuration.nix`. First of all add the `lib` namespace as attribute in line 5:
  
 ```
 { config, lib, pkgs, ...}:
 ```
  
-Next uncomment line 53:
+Next uncomment line 63:
 
 ```
 services.openssh.enable = true;
 ```
 
-... and add two new lines 54-55:
+... and add two new lines 64-65:
 
 ```
 services.openssh.permitRootLogin = "yes";
 systemd.services.sshd.wantedBy = lib.mkOverride 40 [ "multi-user.target" ];
 ```
 
-Next change root password:
+Next change root password to `changeme`:
 
 ```
 # passwd
@@ -119,17 +118,17 @@ Finally build the custom install image by launching the following command:
 
 ```
 # cd nixos-setup-minimal-installation-cd
-# NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
+# NIX_PATH=nixpkgs=channel:nixos-20.03:nixos-config=./iso.nix nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
-The NixOS image will be stored in `result/iso`, so in our case in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso`.
+The NixOS ISO image is stored in `/nix/store/` and symlinked to `result/iso`, in our case we find the ISO image in `/root/nixos-setup-minimal-installation-cd/result/iso/nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso`.
 
 # Create USB flash drive
 
 Next we need to create a bootable USB flash drive. First of all copy the created ISO image from our VM to our host:
 
 ```
-$ scp root@172.30.0.121:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso .
+$ scp root@IP_OF_OUR_VM:/root/nixos-setup-minimal-installation-cd/result/iso/nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso .
 ```
 
 Next plug in a USB flash drive that will be used for our custom installation image and check on our host (macOS) which device filename has been assigned to:
@@ -162,8 +161,8 @@ Creating the partition map
 Waiting for partitions to activate
 Formatting disk2s1 as MS-DOS (FAT32) with name NIXOS_ISO
 512 bytes per physical sector
-/dev/rdisk2s1: 30189312 sectors in 1886832 FAT32 clusters (8192 bytes/cluster)
-bps=512 spc=16 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2 drv=0x80 bsec=30218840 bspf=14741 rdcl=2 infs=1 bkbs=6
+/dev/rdisk2s1: 30186672 sectors in 1886667 FAT32 clusters (8192 bytes/cluster)
+bps=512 spc=16 res=32 nft=2 mid=0xf8 spt=32 hds=255 hid=2048 drv=0x80 bsec=30216192 bspf=14740 rdcl=2 infs=1 bkbs=6
 Mounting disk
 Finished erase on disk2
 ```
@@ -183,15 +182,15 @@ Unmount of all volumes on disk2 was successful
 Next copy blockwise the custom minimal installation ISO image to our USB flash drive:
 
 ```
-$ sudo dd bs=4m if=nixos-19.09beta606.3ba0d9f75cc-x86_64-linux.iso of=/dev/rdisk2
+$ sudo dd bs=4m if=nixos-20.03.2411.30fb4e1e206-x86_64-linux.iso of=/dev/rdisk2
 ```
 
 After the password has been entered, the file is copied:
 
 ```
-135+0 records in
-135+0 records out
-566231040 bytes transferred in 100.537503 secs (5632038 bytes/sec)
+138+1 records in
+138+1 records out
+579862528 bytes transferred in 103.871480 secs (5582500 bytes/sec)
 ```
 
 Finally we have created an USB flash drive that is bootable by any computer. We will use this USB drive to bootstrap our NixOS machines. In the end our USB drive should have a partition schema similar to:
@@ -203,5 +202,5 @@ Finally we have created an USB flash drive that is bootable by any computer. We 
    1:                       0xEF                         22.0 MB    disk2s2
 ```
 
-You find the ISO image in the [release section](https://github.com/cpilka/nixos-setup-minimal-installation-cd/releases) of the Git repository. It contains the most recent version of the NixOS 19.09 installer ISO image.
+You find the ISO image in the [release section](https://github.com/asconix/nixos-setup-minimal-installation-cd/releases) of the Git repository.
 
