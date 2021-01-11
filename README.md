@@ -32,22 +32,22 @@ First of all download the appropriate VirtualBox appliance. You find the latest 
 
 ```
 $ cd /tmp
-$ curl -O https://releases.nixos.org/nixos/20.09/nixos-20.09.2538.0cfd08f4881/nixos-20.09.2538.0cfd08f4881-x86_64-linux.ova
+$ curl -O https://releases.nixos.org/nixos/20.09/nixos-20.09.2555.41dddb12837/nixos-20.09.2555.41dddb12837-x86_64-linux.ova
 ```
 
 Next check if the SHA256 checksum matches:
 
 ```
-$ sha256sum nixos-20.09.2538.0cfd08f4881-x86_64-linux.ova
+$ sha256sum nixos-20.09.2555.41dddb12837-x86_64-linux.ova
 ```
 
 The calculated SHA256 hash should be:
 
 ```
-67581016b7715cb5d865a4d84a992142d92e8ecfdf295b7ef13ec1401f31d173  nixos-20.03.2351.f8248ab6d9e-x86_64-linux.ova
+ae24edd673d43aed99bb9422591ce15dd322b52c8c49248239cdd01d6200f113  nixos-20.09.2555.41dddb12837-x86_64-linux.ova
 ```
 
-... and should be same as listed at [https://nixos.org/channels/nixos-20.03](https://nixos.org/channels/nixos-20.03).
+... and should be same as listed at [https://nixos.org/channels/nixos-20.09](https://nixos.org/channels/nixos-20.09).
 
 Next start Virtualbox and import the OVA file for the downloaded VirtualBox appliance via `File` -> `Import Appliance`.
 
@@ -55,7 +55,7 @@ Next go into `Machine` -> `Settings`, then `System` and set `Base memory` to 409
 
 Next go into `Machine` -> `Settings`, then `Network` -> `Adapter 1`  and set `Attached to` to `Bridged adapter`. Next go to `Advanced` and set `Adapter type` to `Intel PRO/1000 MT Desktop (82540EM)`. Also ensure that `Cable Connected` is checked.
 
-Next start the virtual machine. It's not required to login, Plasma 5 is launched automatically as user `demo`. Whenever required (e.g. for a `sudo`), the default password for this user is also `demo`. When the desktop appears, open a terminal and launch the following commands:
+Next start the virtual machine. It's not required to login, Plasma 5 is launched automatically as user `demo`. Whenever required (e.g. for a `sudo`), the default password for this user is also `demo`. When the desktop appears, open a terminal and launch the following commands (root PW is: 'demo'):
  
 ```
 $ sudo su -
@@ -76,13 +76,13 @@ To login later via SSH into our virtual machine we need to enable SSH daemon in 
 { config, lib, pkgs, ...}:
 ```
  
-Next uncomment line 63:
+Next uncomment line 89:
 
 ```
 services.openssh.enable = true;
 ```
 
-... and add two new lines 64-65:
+... and add two new lines 90-91:
 
 ```
 services.openssh.permitRootLogin = "yes";
