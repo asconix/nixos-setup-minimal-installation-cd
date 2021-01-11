@@ -1,17 +1,17 @@
-# NixOS 19.09 minimal custom installer
+# NixOS 20.09 minimal custom installer
 
-This repository contains a build script to create a custom NixOS 19.09 minimal installation ISO image. Compared to the original NixOS minimal installation ISO image, our custom ISO image contains following modifications:
+This repository contains a build script to create a custom NixOS 20.09 minimal installation ISO image. Compared to the original NixOS minimal installation ISO image, our custom ISO image contains following modifications:
 
-- initial copy of the NixOS 19.09 channel is provided so that the user doesn't need to run "nix-channel --update" first
+- initial copy of the NixOS 20.09 channel is provided so that the user doesn't need to run "nix-channel --update" first
 - package `dialog` is installed since it is required by our custom installer
 - SSH daemon is running and accepting logins for `root`
 - password for root is set to `changeme`
 
-To create a custom NixOS installation image we either need an existing NixOS 19.09 environment or at least VirtualBox on our machine.
+To create a custom NixOS installation image we either need an existing NixOS 20.09 environment or at least VirtualBox on our machine.
 
 ## Existing NixOS environment
 
-If we already have access to a a NixOS 19.09 instance, we just need to clone the Git repository:
+If we already have access to a a NixOS 20.09 instance, we just need to clone the Git repository:
 
 ```
 # cd ~
@@ -21,24 +21,24 @@ If we already have access to a a NixOS 19.09 instance, we just need to clone the
 ... and build the ISO image by launching the following command:
 
 ```
-NIX_PATH=nixpkgs=channel:nixos-19.09:nixos-config=./iso.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
+NIX_PATH=nixpkgs=channel:nixos-20.09:nixos-config=./iso.nix nix-build --no-out-link '<nixpkgs/nixos>' -A config.system.build.isoImage
 ```
 
 ## VirtualBox
 
-In case we don't have access to a NixOS 19.09 instance, the easiest way is to run the build in a virtual machine. To achieve this we need VirtualBox installed.
+In case we don't have access to a NixOS 20.09 instance, the easiest way is to run the build in a virtual machine. To achieve this we need VirtualBox installed.
 
-First of all download the appropriate VirtualBox appliance. You find the latest build at [https://nixos.org/channels/nixos-19.09](https://nixos.org/channels/nixos-19.09):
+First of all download the appropriate VirtualBox appliance. You find the latest build at [https://nixos.org/channels/nixos-20.09](https://nixos.org/channels/nixos-20.09):
 
 ```
 $ cd /tmp
-$ curl -O https://releases.nixos.org/nixos/19.09/nixos-19.09.809.5000b1478a1/nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+$ curl -O https://releases.nixos.org/nixos/20.09/nixos-20.09.2538.0cfd08f4881/nixos-20.09.2538.0cfd08f4881-x86_64-linux.ova
 ```
 
 Next check if the SHA256 checksum matches:
 
 ```
-$ sha256sum nixos-19.09.809.5000b1478a1-x86_64-linux.ova
+$ sha256sum nixos-20.09.2538.0cfd08f4881-x86_64-linux.ova
 ```
 
 The calculated SHA256 hash should be:
